@@ -1,0 +1,19 @@
+{
+	startTime : "",		// ISO date/time, parsing is on the front end
+endTime : "",		// ISO date/time, parsing is on the front end
+	packageRef : {}		// Current reservation promotion related information
+	userInfo : {		// User related information (if needed)
+		fName : "" 		// Fist name
+		lName : ""		// Last name
+		... more fields eg. nationality, request origin
+	},
+	ref : {				// system generated information (if needed)
+		session : "",
+
+	},
+	lastModifiedDate : ""	// ISO date/time, show last modified date,
+	lastModifiedBy : {}		// Change by user or support 
+	createdBy : {},			// show create by person(if needed)
+	createdDate : ""		// ISO date/time, show create date
+}
+

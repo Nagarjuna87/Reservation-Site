@@ -1,0 +1,163 @@
+display 
+6 am									midnight
+Depart ------------------------Land
+		Depart ========= Land
+
+//This is html file
+<!DOCTYPE html>
+<html ng-app="plunker">
+
+<head>
+   <meta charset="utf-8" />
+   <title>AngularJS </title>
+   <script>
+       document.write('<base href="' + document.location + '" />');
+   </script>
+   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.3/jasmine.min.css">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.3/jasmine.min.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.3/jasmine-html.min.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.3/boot.min.js"></script>
+   <script data-require="angular.js@1.4.x" src="https://code.angularjs.org/1.4.9/angular.js" data-semver="1.4.9"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.9/angular-mocks.js"></script>
+   <script src="app.js"></script>
+   <script>
+       describe("checkJSON", function (myService) {
+           beforeEach(module('plunker'));
+
+           var myService, httpBackend;
+           beforeEach(function () {
+               angular.mock.inject(function ($injector) {
+                   httpBackend = $injector.get('$httpBackend');
+                   myService = $injector.get('myService');
+               })
+           });
+
+           describe('checkJSON', function () {
+               it("should verify customer name", inject(function () {
+                   httpBackend.expectGET('data.json').respond({
+                       "startTime": "2015-03-27T03:00:00+0000",
+                       "endTime": "2015-03-27T18:00:00+0000",
+                       "packageRef": {},
+                       "userInfo": {
+                           "fName": "John",
+                           "lName": "Doe"
+                       },
+                       "ref": {
+                           "session": ""
+                       },
+                       "lastModifiedDate": "2015-03-25T01:00:00+0000",
+                       "lastModifiedBy": {},
+                       "createdBy": {},
+                       "createdDate": "2015-03-25T03:20:00+0000"
+                   });
+                   myService.async().then(function (data) {
+                       expect(data.data.userInfo.fName).toEqual("John");
+                   });
+                   httpBackend.flush();
+               }))
+           })
+       });
+   </script>
+</head>
+
+<body ng-controller="MainCtrl">
+
+   <p>Departure:<br />
+       <new-time></new-time>
+   </p>
+</body>
+
+</html>
+
+// This is app.js file
+var app = angular.module('plunker', []);
+
+app.factory('myService', function ($http) {
+   return {
+       async: function () {
+           return $http.get('data.json');
+       }
+   };
+});
+
+app.directive('newTime', ['myService', function (myService) {
+   return {
+       restrict: 'AE',
+       link: function (scope, element, attr) {
+           myService.async().then(function (data) {
+               data = data.data
+               var time_start = new Date(data.startTime).toDateString()
+               var time_end = new Date(data.endTime).toDateString()
+               var diff = Math.abs(new Date(data.endTime) - new Date(data.startTime));
+               var hours_diff = ((diff/1000)/3600)
+               element.append(time_start+"=".repeat(hours_diff)+time_end)
+               
+           });
+           
+       }
+   }
+
+}]);
+
+app.controller('MainCtrl', function ($scope, myService) {
+   $scope.name = 'World';
+});
+
+//This is myService.js file
+describe("checkJSON", function (service) {
+   beforeEach(module('plunker'));
+
+   var service, httpBackend;
+   beforeEach(function () {
+       angular.mock.inject(function ($injector) {
+           httpBackend = $injector.get('$httpBackend');
+           service = $injector.get('service');
+       })
+   });
+
+   describe('checkJSON', function () {
+       it("should verify customer name", inject(function () {
+           httpBackend.expectGET('data.json').respond({
+               "startTime": "2015-03-27T03:00:00+0000",
+               "endTime": "2015-03-27T18:00:00+0000",
+               "packageRef": {},
+               "userInfo": {
+                   "fName": "John",
+                   "lName": "Doe"
+               },
+               "ref": {
+                   "session": ""
+               },
+               "lastModifiedDate": "2015-03-25T01:00:00+0000",
+               "lastModifiedBy": {},
+               "createdBy": {},
+               "createdDate": "2015-03-25T03:20:00+0000"
+           });
+           service.async(function (result) {
+               expect(result.UserInfo.fName).toEqual("John");
+           });
+           httpBackend.flush();
+       }))
+   })
+});
+// This is JSON data file
+{
+	"startTime" : "2015-03-27T03:00:00+0000",		
+	"endTime" : "2015-03-27T18:00:00+0000",		
+	"packageRef" : {}	,	
+	"userInfo" : {		
+		"fName" : "John", 		
+		"lName" : "Doe"		
+	},
+	"ref" : {				
+		"session" : ""
+	},
+	"lastModifiedDate" : "2015-03-25T01:00:00+0000",	
+	"lastModifiedBy" : {}	,	
+	"createdBy" : {},			
+	"createdDate" : "2015-03-25T03:20:00+0000"		
+}
+
+
+
+
